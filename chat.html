@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="glass-panel p-6 md:p-8 rounded-2xl shadow-sm flex flex-col h-[70vh] animate-[fadein_0.5s_ease-out]">
+    <div class="mb-4">
+        <h2 class="text-3xl font-black mb-1">Chat de Atletas</h2>
+        <p class="text-gray-500 text-sm font-medium">Conectado en tiempo real vía WebSockets P2P.</p>
+    </div>
+    
+    <div id="chat-box" class="flex-1 overflow-y-auto bg-white/50 dark:bg-gray-800/10 rounded-xl p-4 mb-4 border border-gray-100 dark:border-gray-800 space-y-3">
+        <!-- Messages here -->
+        <div class="text-center text-xs text-gray-400 font-bold uppercase tracking-widest my-4">Sistema Seguro Iniciado</div>
+    </div>
+
+    <form id="chat-form" class="flex gap-2 relative">
+        <input type="text" id="msg" class="flex-1 px-4 py-3 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white transition" placeholder="Escribe un mensaje..." autocomplete="off" required>
+        <button type="submit" class="bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-bold px-6 py-3 rounded-xl hover-scale transition shadow-lg">Enviar</button>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    const socket = io();
+    const chatBox = document.getElementById('chat-box');
+    const chatForm = document.getElementById('chat-form');
+    const msgInput = document.getElementById('msg');
+    
+    const currUser = "{{ user.username }}";
+
+    socket.on('message', function(data) {
+        const div = document.createElement('div');
+        const isMe = data.user === currUser;
+        
+        div.className = `max-w-[80%] rounded-2xl p-3 text-sm ${isMe ? 'bg-blue-600 text-white ml-auto rounded-br-none' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white mr-auto rounded-bl-none'}`;
+        
+        div.innerHTML = `
+            ${!isMe ? `<div class="font-black text-[10px] uppercase opacity-50 mb-1">${data.user}</div>` : ''}
+            <div>${data.msg}</div>
+        `;
+        
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const text = msgInput.value.trim();
+        if(text) {
+            socket.emit('message', {msg: text});
+            msgInput.value = '';
+        }
+    });
+</script>
+{% endblock %}

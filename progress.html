@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="glass-panel p-6 md:p-8 rounded-2xl shadow-sm animate-[fadein_0.5s_ease-out]">
+    <div class="flex flex-col md:flex-row justify-between mb-8">
+        <div>
+            <h2 class="text-3xl font-black mb-1">Registro de Avances</h2>
+            <p class="text-gray-500 text-sm font-medium">Marca los días que has completado tus rutinas haciendo click en el calendario.</p>
+        </div>
+        <div class="mt-4 md:mt-0 flex gap-4 items-center font-bold text-sm">
+            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#10b981]"></span> Completado</span>
+        </div>
+    </div>
+    
+    <div id="calendar" class="text-sm font-semibold rounded-xl overflow-hidden bg-white/50 dark:bg-gray-800/10 p-2 border border-gray-100 dark:border-gray-800"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var isDarkMode = document.body.classList.contains('dark');
+        
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            headerToolbar: {
+                left: 'title',
+                right: 'prev,next today'
+            },
+            height: 'auto',
+            selectable: true,
+            events: '/api/progress',
+            dateClick: function(info) {
+                // Toogle event on click
+                fetch('/api/progress', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({date: info.dateStr})
+                }).then(() => {
+                    calendar.refetchEvents();
+                });
+            }
+        });
+        
+        calendar.render();
+    });
+</script>
+
+<style>
+    /* Antigravity Theme overrides for FullCalendar */
+    .fc-theme-standard td, .fc-theme-standard th {
+        border-color: rgba(156, 163, 175, 0.2);
+    }
+    .fc .fc-button-primary {
+        background-color: #111827; 
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+    body.dark .fc .fc-button-primary {
+        background-color: #f8fafc;
+        color: #111827;
+    }
+    .fc .fc-toolbar-title {
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+    }
+    .fc-daygrid-day-number { font-weight: 700; }
+</style>
+{% endblock %}

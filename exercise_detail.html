@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center animate-[fadein_0.3s_ease-out]">
+    <div>
+        <a href="{{ url_for('exercises') }}" class="text-sm font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white transition flex items-center mb-2">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Volver a Biblioteca
+        </a>
+        <h1 class="text-4xl font-bold mb-2 tracking-tight">{{ ex.name }}</h1>
+        <div class="flex gap-2 text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">
+            <span class="bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded">{{ ex.category }}</span>
+            <span class="bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded">{{ ex.level }}</span>
+            <span class="bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded">{{ ex.equipment }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-[fadein_0.5s_ease-out]">
+    <!-- Media Column -->
+    <div class="flex flex-col gap-6">
+        <div class="glass-panel p-2 rounded-2xl overflow-hidden shadow-xl aspect-video bg-black flex flex-col">
+            <iframe class="w-full h-full rounded-xl" src="{{ video_url }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        
+        <div class="glass-panel p-4 rounded-2xl overflow-hidden flex items-center justify-center bg-white/20">
+            <img src="{{ ex.image_url }}" alt="{{ ex.name }}" class="max-h-64 object-contain rounded-xl rounded shadow-sm">
+        </div>
+    </div>
+
+    <!-- Info Column -->
+    <div class="glass-panel p-6 md:p-8 rounded-2xl shadow-sm flex flex-col">
+        <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">Instrucciones <span class="bg-blue-100 text-blue-800 text-[10px] uppercase px-2 py-1 rounded-full">Traducido</span></h3>
+        <div class="prose prose-sm md:prose-base dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-8 flex-1">
+            <p>{{ ex.instructions_es }}</p>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 border-t border-gray-200 dark:border-gray-700 pt-6 mt-auto">
+            <div>
+                <span class="block text-xs uppercase text-gray-500 font-bold mb-1">Músculos Primarios</span>
+                <span class="text-blue-600 dark:text-blue-400 font-semibold">{{ ex.primary_muscles }}</span>
+            </div>
+            <div>
+                <span class="block text-xs uppercase text-gray-500 font-bold mb-1">Tipo de Fuerza</span>
+                <span class="font-semibold">{{ ex.force }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

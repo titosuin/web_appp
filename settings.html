@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-2xl mx-auto mt-10 animate-[fadein_0.3s_ease-out]">
+    <div class="glass-panel p-8 md:p-12 rounded-2xl shadow-xl">
+        <h2 class="text-3xl font-bold mb-2">Ajustes de Rutina y Nutrición</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-8">Modifica tus parámetros actuales para recalcular tus macros y generar una nueva distribución de entrenamiento.</p>
+
+        <form method="POST" action="/settings" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Peso Actual (kg)</label>
+                    <input type="number" step="0.1" name="weight" value="{{ user.stats.weight }}" class="w-full px-4 py-3 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-black transition" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Días de Entrenamiento</label>
+                    <select name="days_per_week" class="w-full px-4 py-3 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-black transition" required>
+                        <option value="2" {% if current_days == 2 %}selected{% endif %}>2 Días</option>
+                        <option value="3" {% if current_days == 3 %}selected{% endif %}>3 Días</option>
+                        <option value="4" {% if current_days == 4 %}selected{% endif %}>4 Días</option>
+                        <option value="5" {% if current_days >= 5 %}selected{% endif %}>5+ Días</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr class="border-gray-200 dark:border-gray-700 my-8">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Nivel de Actividad Diaria</label>
+                    <select name="activity_level" class="w-full px-4 py-3 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-black transition" required>
+                        <option value="Sedentario" {% if user.stats.activity_level == 'Sedentario' %}selected{% endif %}>Sedentario (Trabajo de escritorio)</option>
+                        <option value="Ligero" {% if user.stats.activity_level == 'Ligero' %}selected{% endif %}>Ligero (1-3 días de actividad suave)</option>
+                        <option value="Moderado" {% if user.stats.activity_level == 'Moderado' %}selected{% endif %}>Moderado (3-5 días ejercicio medio)</option>
+                        <option value="Fuerte" {% if user.stats.activity_level == 'Fuerte' %}selected{% endif %}>Fuerte (Actividad atlética diaria)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Tu Meta (Tipo de Rutina)</label>
+                    <select name="goal" class="w-full px-4 py-3 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-black transition" required>
+                        <option value="Composición" {% if user.stats.goal == 'Composición' %}selected{% endif %}>Recomposición (Estética y Salud)</option>
+                        <option value="Volumen" {% if user.stats.goal == 'Volumen' %}selected{% endif %}>Volumen (Hipertrofia)</option>
+                        <option value="Déficit" {% if user.stats.goal == 'Déficit' %}selected{% endif %}>Déficit (Pérdida de Grasa)</option>
+                        <option value="Powerlifting" {% if user.stats.goal == 'Powerlifting' %}selected{% endif %}>Powerlifting (Fuerza Máxima)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full hover-scale mt-8 bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl text-lg">
+                Guardar y Recalcular
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

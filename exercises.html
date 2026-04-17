@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center animate-[fadein_0.3s_ease-out]">
+    <div>
+        <h2 class="text-3xl font-black mb-1">Megabiblioteca de Ejercicios</h2>
+        <p class="text-gray-500 text-sm font-medium">Buscador Oficial OpenSource. Haz clic en un ejercicio para ver el vídeo técnico y traducción completa al Español.</p>
+    </div>
+    <div class="mt-4 md:mt-0 w-full md:w-auto">
+        <form action="{{ url_for('exercises') }}" method="GET" class="relative">
+            <input type="text" name="q" value="{{ query }}" placeholder="Ej: Squat, Bench Press..." class="w-full md:w-64 pl-10 pr-4 py-2 bg-white/50 dark:bg-gray-800/10 border border-gray-200 dark:border-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white transition text-sm">
+            <div class="absolute left-3 top-2.5 text-gray-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            {% if query %}
+            <a href="{{ url_for('exercises') }}" class="absolute right-3 top-2.5 text-gray-400 hover:text-black dark:hover:text-white">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </a>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-[fadein_0.5s_ease-out]">
+    {% if exercises.items|length == 0 %}
+    <div class="col-span-4 text-center py-20 text-gray-400 font-bold">
+        No se encontraron ejercicios con ese nombre.
+    </div>
+    {% endif %}
+
+    {% for ex in exercises.items %}
+    <div class="glass-panel p-5 rounded-2xl shadow-sm flex flex-col hover-scale relative overflow-hidden group">
+        <div class="h-32 mb-4 bg-white dark:bg-gray-800 rounded-xl overflow-hidden flex items-center justify-center p-2 relative">
+            <img src="{{ ex.image_url }}" alt="{{ ex.name }}" class="max-h-full object-contain mix-blend-multiply dark:mix-blend-normal opacity-90 group-hover:opacity-100 transition-opacity">
+        </div>
+        
+        <div class="text-[10px] font-black uppercase text-gray-500 dark:text-gray-400 mb-2 tracking-widest">{{ ex.category }} • {{ ex.level }}</div>
+        <h3 class="text-lg font-bold mb-3 leading-tight">{{ ex.name }}</h3>
+        
+        <p class="text-xs font-semibold mb-2">Eq: <span class="font-normal">{{ ex.equipment }}</span></p>
+        <p class="text-xs font-semibold mb-3">Músc: <span class="font-normal text-blue-600 dark:text-blue-400">{{ ex.primary_muscles }}</span></p>
+        
+        <a href="{{ url_for('exercise_detail', ex_id=ex.id) }}" class="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800 text-center text-sm font-bold w-full bg-gray-900 text-white dark:bg-white dark:text-gray-900 py-3 rounded-xl hover-scale transition shadow-sm block">
+            Ver Técnica y Vídeo
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+<div class="mt-12 flex justify-center gap-2 pb-12">
+    {% if exercises.has_prev %}
+    <a href="{{ url_for('exercises', page=exercises.prev_num, q=query) }}" class="px-4 py-2 bg-white dark:bg-gray-800 rounded-lg text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition">Anterior</a>
+    {% endif %}
+    
+    <span class="px-4 py-2 text-sm font-bold text-gray-500 flex items-center shadow-sm glass-panel rounded-lg">Página {{ exercises.page }} de {{ exercises.pages }}</span>
+    
+    {% if exercises.has_next %}
+    <a href="{{ url_for('exercises', page=exercises.next_num, q=query) }}" class="px-4 py-2 bg-white dark:bg-gray-800 rounded-lg text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition">Siguiente</a>
+    {% endif %}
+</div>
+{% endblock %}

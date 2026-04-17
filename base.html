@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronMind Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- FullCalendar CSS and Shepherd Tour CSS -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/css/shepherd.css" />
+</head>
+
+<body class="transition-colors duration-300">
+    <canvas id="bg-particles"></canvas>
+
+    {% if session.get('user_id') %}
+    <!-- Navbar -->
+    <nav class="glass-panel sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center relative">
+            <span class="font-black tracking-tighter text-2xl uppercase">IronMind</span>
+            <div class="flex items-center gap-6">
+                <!-- IDs for Tour Guides -->
+                <a href="{{ url_for('dashboard') }}" id="nav-dash"
+                    class="hover:text-gray-500 font-medium hidden sm:block">Dashboard</a>
+                <a href="{{ url_for('progress') }}" id="nav-prog"
+                    class="hover:text-gray-500 font-medium hidden sm:block">Avances</a>
+                <a href="{{ url_for('exercises') }}" id="nav-exe"
+                    class="hover:text-gray-500 font-medium hidden sm:block">Ejercicios</a>
+                <a href="{{ url_for('chat') }}" id="nav-chat"
+                    class="hover:text-gray-500 font-medium hidden sm:block">Chat</a>
+                <a href="{{ url_for('settings') }}"
+                    class="text-blue-600 dark:text-blue-400 hover:text-blue-800 font-bold ml-2 hidden sm:block">Ajustes
+                    Rutina</a>
+                <a href="{{ url_for('logout') }}" class="text-red-500 hover:text-red-600 font-medium ml-4">Salir</a>
+                <button id="theme-toggle" class="focus:outline-none text-xl ml-2 hover-scale">🌓</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Nav Fallback -->
+    <div class="sm:hidden flex justify-around p-4 glass-panel m-4 rounded-xl text-xs font-bold flex-wrap gap-2">
+        <a href="{{ url_for('dashboard') }}">Dash</a>
+        <a href="{{ url_for('progress') }}">Avances</a>
+        <a href="{{ url_for('exercises') }}">Ejercicios</a>
+        <a href="{{ url_for('chat') }}">Chat</a>
+        <a href="{{ url_for('settings') }}" class="text-blue-500">Ajustes</a>
+    </div>
+    {% endif %}
+
+    <div class="max-w-6xl mx-auto p-4 relative z-10 pt-8">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for message in messages %}
+            <div
+                class="glass-panel bg-white/40 dark:bg-black/40 text-sm font-bold p-3 rounded-lg border-l-4 border-gray-900 dark:border-white animate-[fadein_0.3s_ease-out]">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Gamification & Magic -->
+    <div id="easter-egg-dumbbell" class="fixed z-50 cursor-pointer transition-all duration-[400ms] ease-in-out"
+        style="top: 80px; left: 80px;" title="¡Atrápame si puedes!">
+        <span class="text-4xl drop-shadow-lg">🏋️‍♂️</span>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/js/shepherd.min.js"></script>
+
+    <script>
+        // Jumping Dumbbell Easter Egg Element
+        const dumbbell = document.getElementById('easter-egg-dumbbell');
+        if (dumbbell) {
+            function jumpAround() {
+                const maxX = window.innerWidth - 60;
+                const maxY = window.innerHeight - 60;
+
+                const newX = Math.floor(Math.random() * maxX);
+                const newY = Math.floor(Math.random() * maxY);
+
+                dumbbell.style.left = newX + "px";
+                dumbbell.style.top = newY + "px";
+                dumbbell.style.transform = `rotate(${Math.random() * 360}deg)`;
+            }
+            dumbbell.addEventListener('click', jumpAround);
+        }
+    </script>
+
+    {% if request.endpoint == 'dashboard' and session.get('user_id') and user and not user.tour_completed %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tour = new Shepherd.Tour({
+                useModalOverlay: true,
+                defaultStepOptions: { classes: 'shadow-md bg-white dark:bg-gray-800 text-black dark:text-white', scrollTo: true }
+            });
+
+            tour.addStep({
+                id: 'intro',
+                text: '¡Bienvenido a IronMind Academy! Vamos a darte un tour rápido.',
+                attachTo: { element: '#nav-dash', on: 'bottom' },
+                buttons: [{ text: 'Siguiente', action: tour.next }]
+            });
+
+            tour.addStep({
+                id: 'prog',
+                text: 'En la pestaña Avances, podrás marcar tus entrenamientos diarios en el calendario.',
+                attachTo: { element: '#nav-prog', on: 'bottom' },
+                buttons: [{ text: 'Siguiente', action: tour.next }]
+            });
+
+            tour.addStep({
+                id: 'exe',
+                text: 'Nuestra Megabiblioteca tiene cientos de ejercicios con videos explicativos.',
+                attachTo: { element: '#nav-exe', on: 'bottom' },
+                buttons: [{ text: 'Finalizar', action: tour.next }]
+            });
+
+            tour.start();
+            tour.on('complete', () => fetch('/tour_complete', { method: 'POST' }));
+        });
+    </script>
+    {% endif %}
+</body>
+
+</html>

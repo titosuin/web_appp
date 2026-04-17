@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="premium-login-wrapper">
+    <div class="premium-login-card">
+        <h1 class="brand-title">IRONMIND</h1>
+        <p class="brand-subtitle">Fitness Academy</p>
+        
+        <form method="POST" action="/" class="premium-login-form">
+            <div class="input-group">
+                <input type="text" name="username" placeholder="Nombre de usuario" class="premium-input" required>
+            </div>
+            <div class="input-group">
+                <input type="password" name="password" placeholder="Contraseña" class="premium-input" required>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" name="action" value="login" class="premium-btn btn-primary">
+                    <span>Inicia Sesión</span>
+                </button>
+                <button type="submit" name="action" value="register" class="premium-btn btn-secondary">
+                    <span>Regístrate</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
