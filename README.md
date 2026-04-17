@@ -2,7 +2,7 @@
 
 **IronMind Academy** es una plataforma web integral diseñada para la gestión de entrenamientos y el fomento de comunidades de powerlifting y fitness.
 
-Este proyecto representa la evaluación final para el **Instituto Tecnológico de Las Américas (ITLA)**. Su desarrollo integra un ciclo de vida de software seguro (**S-SDLC**) mediante prácticas de **DevSecOps**, análisis profundo de vulnerabilidades y despliegue automatizado con contenedores.
+Este proyecto representa la evaluación final de la materia **Seguridad en aplicaciones**. Su desarrollo integra un ciclo de vida de software seguro (**S-SDLC**) mediante prácticas de **DevSecOps**, análisis profundo de vulnerabilidades y despliegue automatizado con contenedores.
 
 ---
 
